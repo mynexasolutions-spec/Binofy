@@ -41,8 +41,39 @@ import Footer from '@/components/layout/Footer';
 import { useUI } from '@/context/UIContext';
 import { useAuth } from '@/context/AuthContext';
 
+export interface OrderItem {
+  name: string;
+  size?: string;
+  color?: string;
+  qty?: number;
+  price?: number;
+  image?: string;
+}
+
+export interface OrderShippingAddress {
+  fullName: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  pinCode: string;
+}
+
+export interface Order {
+  id: string;
+  productName: string;
+  productImage: string;
+  date: string;
+  status: string;
+  total: number;
+  itemsCount: number;
+  items?: OrderItem[];
+  shippingAddress: OrderShippingAddress;
+  paymentMethod: string;
+}
+
 // Default initial order dataset (matching the user's mockup screenshot)
-const INITIAL_ORDERS = [
+const INITIAL_ORDERS: Order[] = [
   {
     id: '#BNF1001',
     productName: 'Embroidered Anarkali Suit',
@@ -51,6 +82,16 @@ const INITIAL_ORDERS = [
     status: 'Delivered',
     total: 1799,
     itemsCount: 1,
+    items: [
+      {
+        name: 'Embroidered Anarkali Suit',
+        size: 'M',
+        color: 'Emerald Green',
+        qty: 1,
+        price: 1799,
+        image: '/images/your-image-19.jpg',
+      },
+    ],
     shippingAddress: {
       fullName: 'Sana Khan',
       phone: '+91 98765 43210',
@@ -69,6 +110,16 @@ const INITIAL_ORDERS = [
     status: 'Shipped',
     total: 499,
     itemsCount: 1,
+    items: [
+      {
+        name: 'Chiffon Dupatta Kurta Set',
+        size: 'L',
+        color: 'Rose Pink',
+        qty: 1,
+        price: 499,
+        image: '/images/shopby/festive.jpg',
+      },
+    ],
     shippingAddress: {
       fullName: 'Sana Khan',
       phone: '+91 98765 43210',
@@ -87,6 +138,16 @@ const INITIAL_ORDERS = [
     status: 'Delivered',
     total: 399,
     itemsCount: 1,
+    items: [
+      {
+        name: 'Pearl Drop Silk Kurta',
+        size: 'S',
+        color: 'Ivory Gold',
+        qty: 1,
+        price: 399,
+        image: '/images/shopby/wedding.jpg',
+      },
+    ],
     shippingAddress: {
       fullName: 'Sana Khan',
       phone: '+91 98765 43210',
@@ -419,7 +480,7 @@ function AuthAndDashboardContent() {
   }, [activeTab]);
 
   // Real-time Orders & Addresses State
-  const [orders, setOrders] = useState(INITIAL_ORDERS);
+  const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [addresses, setAddresses] = useState(INITIAL_ADDRESSES);
   const [orderFilter, setOrderFilter] = useState<OrderStatusFilter>('all');
   const [orderSearchQuery, setOrderSearchQuery] = useState('');
@@ -1548,7 +1609,7 @@ function AuthAndDashboardContent() {
                                       {displayTitle}
                                     </h3>
 
-                                    {isMultiItem && (
+                                    {order.items && order.items.length > 1 && (
                                       <p className="text-[11px] sm:text-xs text-[#8B6B52] font-semibold">
                                         + {order.items.length - 1} more {order.items.length - 1 === 1 ? 'item' : 'items'} in package
                                       </p>
